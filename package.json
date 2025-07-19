@@ -2,25 +2,17 @@
   "name": "next-auth-radix",
   "version": "0.1.0",
   "private": true,
-
   "scripts": {
-    
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-
-    
     "lint": "next lint",
-
-    
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset --force && prisma db seed",
-
-    
     "setup": "cp -n .env.example .env.local 2>/dev/null || true && node -e \"console.log('NEXTAUTH_SECRET=' + require('crypto').randomBytes(32).toString('base64'))\" >> .env.local && echo '✅ .env.local listo'"
   },
-
   "dependencies": {
+    "@auth/prisma-adapter": "^2.10.0",
     "@prisma/client": "^6.12.0",
     "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/react-label": "^2.1.7",
@@ -32,17 +24,18 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.60.0"
   },
-
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.9",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "prisma": "^6.12.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
   }
 }
