@@ -3,7 +3,9 @@ import { Inter } from "next/font/google";
 import { Theme } from "@radix-ui/themes";
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
+
 import SessionProviders from "@/components/SessionProviders";
+import MainNav from "@/components/MainNav";          // ⬅️ nuevo
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +23,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <SessionProviders>
-          <Theme>{children}</Theme>
+          <Theme>
+            {/* --- Cabecera con la navegación --- */}
+            <header className="p-4 border-b">
+              <MainNav />
+            </header>
+
+            {/* --- Contenido de cada página --- */}
+            <main className="p-6">{children}</main>
+          </Theme>
         </SessionProviders>
       </body>
     </html>
