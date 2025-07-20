@@ -15,16 +15,21 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
     }),
-    // Si más adelante usas credenciales propias, añádelas aquí
+    // Si más adelante usas credenciales propias, agrégalas aquí
   ],
 
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = user.role;       // propaga el rol al token
+      if (user) token.role = user.role; // propaga el rol al token
       return token;
     },
     async session({ session, token }) {
-      if (session.user) session.user.role = token.role as "USER" | "ADMIN";
+      if (session.user)
+        session.user.role = token.role as
+          | "USUARIO"
+          | "OPERARIO"
+          | "PRESIDENTE_JAA"
+          | "ADMIN";
       return session;
     },
   },

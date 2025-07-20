@@ -3,30 +3,49 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
-  // Lee el JWT generado por NextAuth
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const { pathname } = req.nextUrl;
+  const pathname = req.nextUrl.pathname;
 
-  // 1) Rutas públicas o estáticas → deja pasar
+  // Público o estático
   if (pathname.startsWith("/api") || pathname === "/") {
     return NextResponse.next();
   }
 
-  // 2) Si no hay sesión → redirige a login
+  // Sin sesión → login
   if (!token) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
-  // 3) Si hay sesión pero NO es admin y pide /admin → redirige a home
+  // ADMIN (global)
   if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // 4) Caso feliz → continúa
+  // OPERARIO
+  if (pathname.startsWith("/operario") && token.role !== "OPERARIO") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // PRESIDENTE_JAA
+  if (pathname.startsWith("/presidente") && token.role !== "PRESIDENTE_JAA") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // USUARIO
+  if (pathname.startsWith("/usuario") && token.role !== "USUARIO") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // Autorizado
   return NextResponse.next();
 }
 
-// El matcher indica a qué rutas se aplica el middleware
+// Rutas protegidas
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/operario/:path*",
+    "/presidente/:path*",
+    "/usuario/:path*",
+  ],
 };

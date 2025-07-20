@@ -14,57 +14,59 @@ export const authOptions: NextAuthOptions = {
           type: "text",
           placeholder: "tu@correo.com",
         },
-          password: { label: "Contraseña", type: "password" },
+        password: { label: "Contraseña", type: "password" },
       },
-      async authorize(credentials, req) {
-        console.log(">>> [authorize] credenciales recibidas:", credentials);
-
+      async authorize(credentials) {
         const email = credentials?.email?.trim().toLowerCase();
         const password = credentials?.password ?? "";
 
-        if (!email || !password) {
-          console.warn("[authorize] Falta email o password.");
-          return null;
-        }
+        if (!email || !password) return null;
 
-        // Buscar usuario EXACTO por email normalizado
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        // 1. Busca al usuario por email exacto
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) throw new Error("Usuario no encontrado");
 
-        console.log("[authorize] Usuario encontrado en DB?:", !!user);
-
-        if (!user) {
-          console.warn("[authorize] Usuario no encontrado:", email);
-          throw new Error("Usuario no encontrado");
-        }
-
-        // Validar password (hash está en user.password)
-        console.log("[authorize] Comparando contraseña...");
+        // 2. Compara la contraseña recibida con el hash
         const ok = await bcrypt.compare(password, user.password);
-        console.log("[authorize] Resultado compare:", ok);
+        if (!ok) throw new Error("Contraseña incorrecta");
 
-        if (!ok) {
-          console.warn("[authorize] Contraseña incorrecta para:", email);
-          throw new Error("Contraseña incorrecta");
-        }
-
-        // Usuario válido: devolvemos objeto serializable SIN password
+        // 3. Devuelve un objeto serializable **con el rol**
         return {
           id: user.id,
           name: user.name,
           email: user.email,
+          role: user.role, // ← clave para los callbacks
         };
       },
     }),
   ],
+
   pages: {
     signIn: "/auth/login",
-    // error: "/auth/login", // opcional, si quieres manejar errores en la misma página
   },
+
   session: {
-    strategy: "jwt", // mantengamos JWT simple
+    strategy: "jwt",
   },
+
+  callbacks: {
+    async jwt({ token, user }) {
+      // cuando authorize devuelve user añadimos el rol al JWT
+      if (user) token.role = (user as any).role;
+      return token;
+    },
+    async session({ session, token }) {
+      // propagamos el rol al cliente
+      if (session.user)
+        session.user.role = token.role as
+          | "USUARIO"
+          | "OPERARIO"
+          | "PRESIDENTE_JAA"
+          | "ADMIN";
+      return session;
+    },
+  },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 

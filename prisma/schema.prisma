@@ -8,7 +8,9 @@ datasource db {
 }
 
 enum Role {
-  USER
+  USUARIO
+  OPERARIO
+  PRESIDENTE_JAA
   ADMIN
 }
 
@@ -17,6 +19,6 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      Role     @default(USER)
+  role      Role     @default(USUARIO)
   createdAt DateTime @default(now())
 }
