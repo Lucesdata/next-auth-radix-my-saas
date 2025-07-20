@@ -16,26 +16,42 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: "Contraseña", type: "password" },
       },
+
+      // ---------- AUTHORIZATION ----------
       async authorize(credentials) {
         const email = credentials?.email?.trim().toLowerCase();
         const password = credentials?.password ?? "";
 
-        if (!email || !password) return null;
+        console.log("[authorize] → email:", email);
+        console.log("[authorize] → password:", password);
 
-        // 1. Busca al usuario por email exacto
+        if (!email || !password) {
+          console.log("[authorize] → missing email or password");
+          return null;
+        }
+
+        // 1) Busca al usuario por email exacto
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) throw new Error("Usuario no encontrado");
+        console.log("[authorize] → user found?:", !!user);
 
-        // 2. Compara la contraseña recibida con el hash
+        if (!user) {
+          throw new Error("Usuario no encontrado");
+        }
+
+        // 2) Compara la contraseña recibida con el hash
         const ok = await bcrypt.compare(password, user.password);
-        if (!ok) throw new Error("Contraseña incorrecta");
+        console.log("[authorize] → compare result:", ok);
 
-        // 3. Devuelve un objeto serializable **con el rol**
+        if (!ok) {
+          throw new Error("Contraseña incorrecta");
+        }
+
+        // 3) Devuelve un objeto serializable **con el rol**
         return {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role, // ← clave para los callbacks
+          role: user.role, // ← clave para callbacks
         };
       },
     }),
@@ -45,9 +61,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
   },
 
-  session: {
-    strategy: "jwt",
-  },
+  session: { strategy: "jwt" },
 
   callbacks: {
     async jwt({ token, user }) {
