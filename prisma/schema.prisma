@@ -7,10 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// ─────────────────────────────────────────
+/// ENUMS
+/// ─────────────────────────────────────────
+enum Role {
+  USUARIO
+  OPERARIO
+  PRESIDENTE_JAA
+  ADMIN
+}
+
+/// ─────────────────────────────────────────
+/// MODELS
+/// ─────────────────────────────────────────
 model User {
   id        String   @id @default(cuid())
   name      String
   email     String   @unique
   password  String
+  role      Role     @default(USUARIO)
+
+  /// Relación opcional (un usuario puede no pertenecer a una planta)
+  plantId   String?      // FK
+  plant     Plant?  @relation(fields: [plantId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Plant {
+  id        String   @id @default(cuid())
+  name      String   @unique
+
+  /// Relación 1‑N inversa
+  users     User[]
+
   createdAt DateTime @default(now())
 }
