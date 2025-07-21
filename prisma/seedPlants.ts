@@ -7,14 +7,14 @@ const plants = [
   "Km18",
   "Pichindé",
   "Las Palmas",
-  "La Luisa",
-  "Buitrera – Soledad",
-  "Buitrera – Carbonero",
-  "La Sirena",
-  "La Fonda",
-  "La Vorágine",
+  "La Luisa",
+  "Buitrera - Soledad",
+  "Buitrera - Carbonero",
+  "La Sirena",
+  "La Fonda",
+  "La Vorágine",
   "Cascajal",
-  "La Elvira",        // planta #13 (ajusta nombre si corresponde)
+  "La Elvira",        // planta #13 (ajusta nombre si corresponde)
 ];
 
 async function main() {
