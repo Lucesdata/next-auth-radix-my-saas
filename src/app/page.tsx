@@ -1,47 +1,61 @@
 // src/app/page.tsx
 'use client';
 
-import React from 'react';
-import { useSession } from 'next-auth/react';
-import { Flex, Text, Button } from '@radix-ui/themes';
-import NextLink from 'next/link';
-import SignoutButton from '@/components/auth/SignoutButton';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import Link from 'next/link';
+import { Button, Text } from '@radix-ui/themes';
+import styles from './Home.module.css';          // ← el módulo está junto a este archivo
 
 export default function HomePage() {
   const { data: session, status } = useSession();
 
-  // Mientras NextAuth determina el estado de la sesión
-  if (status === 'loading') {
-    return (
-      <Flex p="4">
-        <Text>Cargando sesión...</Text>
-      </Flex>
-    );
-  }
-
-  const userEmail = session?.user?.email ?? 'Invitado';
+  if (status === 'loading') return null;        // evita parpadeos
 
   return (
-    <Flex direction="column" gap="4" p="4" align="start">
-      <Text as="p" size="6" weight="bold">
-        Home
-      </Text>
+    <div className={styles.page}>
+      {/* --- Navbar muy simple --- */}
+      <nav style={{ padding: '0.75rem 1rem' }}>
+        <Link href="/">Home</Link>{' | '}
+        <Link href="/plantas">Plantas</Link>{' | '}
+        {!session && <Link href="/auth/login">Iniciar sesión</Link>}
+      </nav>
 
-      {session ? (
-        <>
-          <Text>Bienvenido, {userEmail}</Text>
-          <SignoutButton />
-        </>
-      ) : (
-        <>
-          <Text>No has iniciado sesión.</Text>
-          <NextLink href="/auth/login">
-            <Button variant="solid" color="indigo">
+      {/* --- Contenido centrado --- */}
+      <div className={styles.centerWrapper}>
+        <div className={styles.card}>
+          <h1 className={styles.title}>Monitoreo de Plantas</h1>
+          <p className={styles.subtitle}>
+            Plataforma para visualizar y controlar las lecturas de 13 plantas de
+            agua potable.
+          </p>
+
+          {session ? (
+            <>
+              <Text as="p" size="4" weight="bold" align="center">
+                ¡Hola, {session.user?.name ?? session.user?.email}!
+              </Text>
+              <Button
+                className={styles.btn}
+                variant="solid"
+                color="red"
+                mt="4"
+                onClick={() => signOut()}
+              >
+                Cerrar sesión
+              </Button>
+            </>
+          ) : (
+            <Button
+              className={styles.btn}
+              variant="solid"
+              color="indigo"
+              onClick={() => signIn()}
+            >
               Iniciar sesión
             </Button>
-          </NextLink>
-        </>
-      )}
-    </Flex>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

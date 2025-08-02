@@ -7,31 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USUARIO
-  OPERARIO
-  PRESIDENTE_JAA
-  ADMIN
-}
-
 model User {
-  id       String @id @default(cuid())
-  name     String
-  email    String @unique
-  password String
-  role     Role   @default(USUARIO)
-
-  plantId String?
-  plant   Plant?  @relation(fields: [plantId], references: [id])
-
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("USUARIO")
+  plantId   String?
   createdAt DateTime @default(now())
+  plant     Plant?   @relation(fields: [plantId], references: [id])
 }
 
 model Plant {
-  id   String @id @default(cuid())
-  name String @unique
+  id       String    @id @default(cuid())
+  name     String
+  readings Reading[]
+  users    User[]
+}
 
-  users User[]
-
-  createdAt DateTime @default(now())
+model Reading {
+  id        String   @id @default(cuid())
+  plantId   String
+  timestamp DateTime @default(now())
+  turbidity Float
+  chlorine  Float
+  ph        Float
+  flowIn    Float
+  flowOut   Float
+  tankLevel Float
+  plant     Plant    @relation(fields: [plantId], references: [id])
 }

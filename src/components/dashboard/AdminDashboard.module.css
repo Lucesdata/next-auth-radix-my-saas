@@ -1,0 +1,22 @@
+.container {
+    padding: 1.5rem;
+    background-color: var(--color-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-border);
+    margin-top: 2rem;
+  }
+  
+  .title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+  }
+  

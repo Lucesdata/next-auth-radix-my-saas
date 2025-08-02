@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        {/* SessionProvider y Hooks pasan a un componente cliente */}
+        {/* El SessionProvider ya está dentro de <Providers> */}
         <Providers>
           <Navbar />
           <main className="p-4">{children}</main>

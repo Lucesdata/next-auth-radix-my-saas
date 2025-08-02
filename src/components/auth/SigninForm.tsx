@@ -30,9 +30,8 @@ function SigninForm() {
     });
 
     if (result?.ok) {
-      router.push('/'); // Home o dashboard
+      router.push('/');
     } else {
-      // NextAuth nos da mensaje genérico. Si quieres granular, intercepta error.
       setError('password', {
         type: 'manual',
         message: result?.error || 'Credenciales inválidas',
@@ -42,7 +41,7 @@ function SigninForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Flex direction="column" gap="4" maxWidth="300px">
+      <Flex direction="column" gap="4">
         <Text as="p" weight="bold" size="5" mb="2">
           Iniciar sesión
         </Text>
@@ -101,11 +100,10 @@ function SigninForm() {
           {isSubmitting ? 'Ingresando...' : 'Iniciar sesión'}
         </Button>
 
-        {/* Link a registro */}
-        <Flex justify="between" align="center">
+        <Flex justify="center" align="center">
           <Text size="2">¿No tienes cuenta?</Text>
           <Link href="/auth/register" weight="bold" color="indigo">
-            Regístrate
+            &nbsp;Regístrate
           </Link>
         </Flex>
       </Flex>
